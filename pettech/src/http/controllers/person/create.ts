@@ -9,22 +9,26 @@ export async function create(request: FastifyRequest, reply: FastifyReply) {
     name: z.string(),
     birth: z.coerce.date(),
     email: z.string().email(),
+    user_id: z.coerce.number(),
   });
 
-  const { cpf, name, birth, email } = registerBodySchema.parse(request.body);
+  const { cpf, name, birth, email, user_id } = registerBodySchema.parse(
+    request.body
+  );
 
   try {
     const personRepository = new PersonRepository();
     const createPersonUseCase = new CreatePersonUseCase(personRepository);
 
-    await createPersonUseCase.handler({
+    const person = await createPersonUseCase.handler({
       cpf,
       name,
       birth,
       email,
+      user_id,
     });
 
-    reply.code(201).send();
+    reply.code(201).send(person);
   } catch (error) {
     console.error(error);
     throw new Error("Internal Server Error");

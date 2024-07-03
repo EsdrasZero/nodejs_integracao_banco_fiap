@@ -14,9 +14,9 @@ export class UserRepository {
 
   public async findWithPerson(userId: number): Promise<User & Person| undefined> {
     const result = await database.clientInstance?.query(
-      `SELECT * FROM "users"  
-       LEFT JOIN "person" ON "users".id = "person".user_id
-       WHERE "users".id = $1`,
+      `SELECT * FROM "user"  
+       LEFT JOIN "person" ON "user".id = "person".user_id
+       WHERE "user".id = $1`,
       [userId]
     );
     return result?.rows[0];
