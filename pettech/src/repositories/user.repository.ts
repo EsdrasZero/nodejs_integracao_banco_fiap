@@ -1,3 +1,4 @@
+import { Person } from '@/entities/person.entity';
 import { User } from "@/entities/user.entity";
 import { database } from "@/lib/pg/db";
 
@@ -8,6 +9,16 @@ export class UserRepository {
       [username, password]
     );
 
+    return result?.rows[0];
+  }
+
+  public async findWithPerson(userId: number): Promise<User & Person| undefined> {
+    const result = await database.clientInstance?.query(
+      `SELECT * FROM "users"  
+       LEFT JOIN "person" ON "users".id = "person".user_id
+       WHERE "users".id = $1`,
+      [userId]
+    );
     return result?.rows[0];
   }
 }
