@@ -1,5 +1,4 @@
-import { FindWithPersonUseCase } from "./../../../use-cases/find-with-person";
-import { UserRepository } from "@/repositories/user.repository";
+import { makeFindWithPersonUseCase } from "@/use-cases/factory/make-find-with-person";
 import { FastifyReply, FastifyRequest } from "fastify";
 import { z } from "zod";
 
@@ -9,16 +8,9 @@ export async function findUser(request: FastifyRequest, reply: FastifyReply) {
   });
 
   const { id } = registerParamsSchema.parse(request.params);
-  try {
-    const userRepository = new UserRepository();
-    const findWithPersonUseCase = new FindWithPersonUseCase(userRepository);
-    const user = await findWithPersonUseCase.handler(id);
 
-    return reply.status(200).send(user);
+  const findWithPersonUseCase = makeFindWithPersonUseCase();
+  const user = await findWithPersonUseCase.handler(id);
 
-  } catch (error) {
-
-    console.error(`Error finding user ${error}`);
-    throw new Error(`Error finding user ${error}`);
-  }
+  return reply.status(200).send(user);
 }
